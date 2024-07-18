@@ -62,8 +62,41 @@ def ajouter_contact(contact=None, save=False):
     address = input("Addresse: ") or contact["address"]
     phone = input("Telephone: ") or contact["phone"]
     args = {"lastname": lastname, "firstname": firstname, "address": address, "phone": phone}
-    
+
+    #import ipdb ; ipdb.set_trace()
+
     def click_save(args):
+        #ligne de verification 
+        
+        verification = args["phone"]
+        results = search(verification)
+        if results != []:
+           print("le contact existe déjà")
+        else:
+            success = save_controller(args)
+        
+            if success:
+                print("Contact successfully added.")
+            else:
+                print("Contact failed.")
+    if save:
+        click_save(args)
+    else:
+        afficher_contact(lastname, firstname, address, phone)
+
+def verifie_contact(contact=None, save=False):
+    if not contact:
+        contact = {"lastname": None, "firstname": None, "address": None, "phone": None}
+    lastname = input("Nom: ") or contact["lastname"]
+    firstname = input("Prenom: ") or contact["firstname"]
+    address = input("Addresse: ") or contact["address"]
+    phone = input("Telephone: ") or contact["phone"]
+    args = {"lastname": lastname, "firstname": firstname, "address": address, "phone": phone}
+
+    #import ipdb ; ipdb.set_trace()
+
+    def click_save(args):
+        
         success = save_controller(args)
         if success:
             print("Contact successfully added.")
@@ -76,6 +109,7 @@ def ajouter_contact(contact=None, save=False):
 
 def click_search(string):
     return search_controller(string)
+
 
 def rechercher_contact():
     string = input("Entrer votre recherche: ")
@@ -116,6 +150,7 @@ if __name__ == "__main__":
         if action == 1:
             rechercher_contact()
         elif action == 2:
+
             ajouter_contact(save=True)
         elif action == 3:
             modifier_contact()
