@@ -1,1 +1,2 @@
 Nom,Prenom,Addresse,Phone
+Kamano,Etienne,Matoto,12345Balde,Lamine,Dixinn,234
