@@ -1,1 +1,18 @@
 Nom,Prenom,Addresse,Phone
+Alphonse,kaman,Conakry,999
+Maiga,Pinelo,London,3939
+John,kaman,Paris,333
+Allyssonne,Gono,Sydney,9999
+Vincent,kaman,Japon,2222
+Nicolas,kaman,Amsterdams,292
+Emmanuel,Kaman,Lisbon,4949
+Marie,Zotole,Bipa,490
+Alphonse,Kaman,Conakry,202
+Mariame,Kourouma,Siguiri,338
+Malick,Conde,Ratoma,545445
+Sam,Smith,York,774
+Zuckerberg,Mark,Silicon Valley,433
+Bezos,Jeff,Seattle,494
+Luther,King,Belgium,888
+Sylla,Moussa,Hong Kong,789
+Kaman,Vincent,Conakry,111
