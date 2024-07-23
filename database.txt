@@ -1,2 +1,3 @@
-Nom,Prenom,Addresse,Phone
-Kamano,Etienne,Matoto,12345Balde,Lamine,Dixinn,234
+Diallo,Tewa bintou,Solondonin,534321
+KAMANO,Koumba Philomène,Gueckedou,2311
+Balde,Lamine,Matoto,235
