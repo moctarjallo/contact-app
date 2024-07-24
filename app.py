@@ -1,5 +1,6 @@
-db_path = "./database.txt"
 database = "./database.txt"
+
+db_path = "./database.txt"
 
 def create_multi(contacts):
     data = "\n".join(contacts)
@@ -15,11 +16,11 @@ def create(args):
 def search(string):
     with open(db_path, "r") as db:
         contacts = db.read().split("\n")
-    results = [contacts[i] for i in range(len(contacts)) if contacts[i].find(string)!=-1]
+    results = [contact for contact in contacts if string in contact]
     return results
 
 def search_all():
-    with open("./database.txt", "r") as db:
+    with open(db_path, "r") as db:
         contacts = db.read().strip().split("\n")
     return contacts
 
@@ -29,23 +30,39 @@ def delete(contact):
         contacts.remove(contact)
     return create_multi(contacts)
 
+def remove_duplicates():
+    with open(db_path, "r") as db:
+        contacts = db.read().split("\n")
+    unique_contacts = list(set(contacts))
+    return create_multi(unique_contacts)
+
 def save_controller(args):
-    return create(args)
+    existing_contacts = search(args['phone'])
+    if existing_contacts:
+        print("Le numéro de téléphone existe déjà.")
+        print("Voulez-vous modifier le contact existant ? (oui/non)")
+        choix = input().lower()
+        if choix == "oui":
+            return delete_controller(existing_contacts[0]) and create(args)
+        else:
+            return False
+    else:
+        return create(args)
 
 def search_controller(string):
     results = search(string)
-    if results == []:
-        print("Contact non trouve.")
+    if not results:
+        print("Contact non trouvé.")
     contact_vals = [result.split(',') for result in results]
     contacts = [{"lastname": vals[0], "firstname": vals[1], "address": vals[2], "phone": vals[3]} for vals in contact_vals]
     return contacts
 
 def delete_controller(contact):
-    contact = f"{contact['lastname']},{contact['firstname']},{contact["address"]},{contact["phone"]}"
-    return delete(contact)
+    contact_str = f"{contact['lastname']},{contact['firstname']},{contact['address']},{contact['phone']}"
+    return delete(contact_str)
 
 def afficher_contact(lastname, firstname, address, phone):
-    contact_string = f"Nom: {lastname}\nPrenom: {firstname}\nAddresse: {address}\nTelephone: {phone}\n"
+    contact_string = f"Nom: {lastname}\nPrenom: {firstname}\nAdresse: {address}\nTéléphone: {phone}\n"
     print(contact_string)
 
 def afficher_annuaire():
@@ -57,10 +74,17 @@ def afficher_annuaire():
 def ajouter_contact(contact=None, save=False):
     if not contact:
         contact = {"lastname": None, "firstname": None, "address": None, "phone": None}
-    lastname = input("Nom: ") or contact["lastname"]
-    firstname = input("Prenom: ") or contact["firstname"]
-    address = input("Addresse: ") or contact["address"]
-    phone = input("Telephone: ") or contact["phone"]
+    while True:
+        lastname = input("Nom: ") or contact["lastname"]
+        firstname = input("Prenom: ") or contact["firstname"]
+        address = input("Adresse: ") or contact["address"]
+        phone = input("Téléphone: ") or contact["phone"]
+        
+        if not all([lastname, firstname, address, phone]):
+            print("Tous les champs sont obligatoires. Veuillez réessayer.")
+        else:
+            break
+
     args = {"lastname": lastname, "firstname": firstname, "address": address, "phone": phone}
     
     def click_save(args):
@@ -89,21 +113,24 @@ def rechercher_contact():
     print("5. Retourner au menu principal")
     sub_action = int(input())
     if sub_action == 5:
-        pass
+        return
     elif sub_action == 4:
         supprimer_contact()
     elif sub_action == 3:
         supprimer_contact(modify=True)
 
 def supprimer_contact(modify=False):
-    tel = input("Entrer le numero de telephone complet du contact:")
+    tel = input("Entrer le numéro de téléphone complet du contact:")
     contacts = click_search(tel)
     afficher_contact(*contacts[0].values())
     success = delete_controller(contact=contacts[0])
     if success and not modify:
-        print("Le contact a ete supprime avec succes.")
+        print("Le contact a été supprimé avec succès.")
     elif success and modify:
         ajouter_contact(contact=contacts[0], save=True)
+
+def modifier_contact():
+    rechercher_contact()
 
 if __name__ == "__main__":
     afficher_annuaire()
@@ -111,6 +138,8 @@ if __name__ == "__main__":
         print("Entrer votre action parmi les suivantes:")
         print("1. Rechercher un contact")
         print("2. Ajouter un contact")
+        print("3. Modifier un contact")
+        print("4. Supprimer les doublons")
         print("0. Sortir de l'application")
         action = int(input())
         if action == 1:
@@ -119,7 +148,10 @@ if __name__ == "__main__":
             ajouter_contact(save=True)
         elif action == 3:
             modifier_contact()
+        elif action == 4:
+            remove_duplicates()
+            print("Les doublons ont été supprimés.")
         elif action == 0:
             break
         else:
-            print("Operation non supportee pour le moment.")
+            print("Opération non supportée pour le moment.")
