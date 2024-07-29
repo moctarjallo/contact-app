@@ -1,0 +1,7 @@
+lastname,firstname,address,phone
+diallo,soul,cosa,62169
+Diallo,Oumou,cosa,62168
+dd,dd,dd,6
+Sow,Oumou,sonfonia,6216
+Diallo,Diarraye,cosa,628514700
+Sow,Oumou,Paris,7777
