@@ -34,14 +34,17 @@ def save_controller(args):
 
 def search_controller(string):
     results = search(string)
-    if results == []:
-        print("Contact non trouve.")
-    contact_vals = [result.split(',') for result in results]
-    contacts = [{"lastname": vals[0], "firstname": vals[1], "address": vals[2], "phone": vals[3]} for vals in contact_vals]
-    return contacts
+    try:
+        contact_vals = [result.split(',') for result in results]
+        contacts = [{"lastname": vals[0], "firstname": vals[1], "address": vals[2], "phone": vals[3]} for vals in contact_vals if vals[3]==string or
+                    vals[0]==string or vals[1]==string or vals[2]==string]
+    except:
+        print('le numéro doit etre un entier')
+    else:
+        return contacts
 
 def delete_controller(contact):
-    contact = f"{contact['lastname']},{contact['firstname']},{contact["address"]},{contact["phone"]}"
+    contact = f"{contact['lastname']},{contact['firstname']},{contact['address']},{contact['phone']}"
     return delete(contact)
 
 def afficher_contact(lastname, firstname, address, phone):
@@ -56,19 +59,35 @@ def afficher_annuaire():
 
 def ajouter_contact(contact=None, save=False):
     if not contact:
-        contact = {"lastname": None, "firstname": None, "address": None, "phone": None}
+        contact = {"lastname": None, "firstname": None, "address": None, "phone": ''}
     lastname = input("Nom: ") or contact["lastname"]
     firstname = input("Prenom: ") or contact["firstname"]
     address = input("Addresse: ") or contact["address"]
     phone = input("Telephone: ") or contact["phone"]
     args = {"lastname": lastname, "firstname": firstname, "address": address, "phone": phone}
-    
+    # ligne de verification
     def click_save(args):
-        success = save_controller(args)
-        if success:
-            print("Contact successfully added.")
+        verifie=args["phone"]
+        verif=search(verifie)
+        dico=[]
+        for i in verif:
+            for j in i.split('\n'):
+                argu =j.split(',')
+            dico.append(argu)
+        last_value=[[ligne[-1] for ligne in dico] for i in range(1)]
+        try:
+            int(verifie)
+        except:
+            print('veiller entre les bonnes valeurs')
         else:
-            print("Contact failed.")
+            if verifie in last_value[0]:
+                print('le contact existe déjà')
+            else:
+                success = save_controller(args)
+                if success:
+                     print("Contact successfully added.")
+                else:
+                     print("Contact failed.")
     if save:
         click_save(args)
     else:
@@ -104,22 +123,24 @@ def supprimer_contact(modify=False):
         print("Le contact a ete supprime avec succes.")
     elif success and modify:
         ajouter_contact(contact=contacts[0], save=True)
-
 if __name__ == "__main__":
-    afficher_annuaire()
     while True:
         print("Entrer votre action parmi les suivantes:")
         print("1. Rechercher un contact")
         print("2. Ajouter un contact")
+        print("3. supprimer_contact")
+        print("4. modifier un contact")
         print("0. Sortir de l'application")
-        action = int(input())
-        if action == 1:
+        action = input()
+        if action == '1':
             rechercher_contact()
-        elif action == 2:
+        elif action == '2':
             ajouter_contact(save=True)
-        elif action == 3:
-            modifier_contact()
-        elif action == 0:
+        elif action == '3':
+            supprimer_contact()
+        elif action =='4':
+            supprimer_contact(modify=True)
+        elif action == '0':
             break
         else:
             print("Operation non supportee pour le moment.")
